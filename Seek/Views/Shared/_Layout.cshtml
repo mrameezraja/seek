@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Seek</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="@Url.Content("~/css/site.css")" asp-append-version="true" />
+</head>
+<body>
+    <!--
+      This example requires updating your template:
+
+      ```
+      <html class="h-full bg-gray-100">
+      <body class="h-full">
+      ```
+    -->
+    <div class="min-h-full">
+        <nav class="bg-gray-800">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="shrink-0">
+                            <img class="size-8" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                                <a asp-area="" asp-controller="Courses" asp-action="Index" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Courses</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        @RenderBody()
+        
+    </div>
+
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

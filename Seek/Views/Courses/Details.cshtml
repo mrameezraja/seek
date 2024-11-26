@@ -1,0 +1,86 @@
+﻿@model Seek.Models.CourseDetailsVM
+@{
+    ViewData["Title"] = Model.Course.name;
+    int index = 0;
+}
+
+<header class="bg-white shadow">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900">@Model.Course.name</h1>
+    </div>
+</header>
+<main>
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div>
+            <div class="grid grid-flow-col gap-3">
+                <div class="col-span-1">
+                    @foreach (var chapter in Model.Course.chapters)
+                    {
+                        index++;
+                        <div x-data="{ open_@(index): @(chapter.slug.Equals(Model.Chapter?.slug).ToString().ToLower()) }">
+                            
+                            <div class="mb-3 cursor-pointer" @@click="open_@(index) = !open_@(index)">@chapter.title.ToLowerInvariant()</div>
+                            
+                            <nav class="px-2 space-y-1" x-show="open_@(index)">
+                                @foreach (var lesson in chapter.lessons)
+                                {
+                                    bool current = lesson.slug.Equals(Model.Lesson?.slug);
+
+                                    <a asp-area="" asp-controller="Courses" asp-action="Details" asp-route-course="@Model.Course.slug" asp-route-chapter="@chapter.slug" asp-route-lesson="@lesson.slug" class="@(current ? "bg-indigo-50 text-gray-900" : "" ) text-gray-600 hover:bg-gray-100 hover:text-gray-500 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                        <div class="flex items-center text-sm leading-5 group">
+                                            <svg class="@(current ? "text-rose-500" : "") h-4 w-4 text-gray-900 stroke-1 mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7.75a.75.75 0 0 1 1.142-.638l3.664 2.249a.75.75 0 0 1 0 1.278l-3.664 2.25a.75.75 0 0 1-1.142-.64z"></path><path d="M12 17v4"></path><path d="M8 21h8"></path><rect x="2" y="3" width="20" height="14" rx="2"></rect></svg>
+                                            
+                                            @lesson.title.ToLowerInvariant()
+
+                                            @if (current)
+                                            {
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-green-700 ml-2"><path d="M20 6 9 17l-5-5"></path></svg>
+                                            }
+                                        </div>
+                                    </a>
+                                }
+                            </nav>
+                        </div>
+                    }
+                </div>
+                <div class="col-span-4">
+                    <video id="vplayer" playsinline controls width="640" height="264" class="border-2">
+                        <source src="@Url.Content($"~/courses/{Model.Course.name}/{Model.Chapter?.title}/{Model.Lesson?.title}.mp4")" type="video/mp4">
+                        <track kind="captions" label="English captions" src="@Url.Content($"~/courses/{Model.Course.name}/{Model.Chapter?.title}/{Model.Lesson?.title}.vtt")" srclang="en" default />
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        const player = new Plyr('#vplayer', {
+            storage: { enabled: true, key: 'plyr' }
+        });
+        player.on('ready', (event) => {
+            const instance = event.detail.plyr;
+            setTimeout(function () {
+                const time = localStorage.getItem('seek.time.@Model.Lesson?.slug');
+                if (time) {
+                    instance.currentTime = parseInt(time) || 0;
+                }
+            }, 175);
+        });
+        player.on('timeupdate', (event) => {
+            localStorage.setItem('seek.time.@Model.Lesson?.slug', event.detail.plyr.currentTime);
+        });
+    </script>
+}
+
+
+
+
+<div x-data="{ open: false }">
+    <button @@click="open = !open">Expand</button>
+
+    <span x-show="open">
+        Content...
+    </span>
+</div>
