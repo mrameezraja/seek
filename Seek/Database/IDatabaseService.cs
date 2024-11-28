@@ -5,7 +5,7 @@ namespace Seek.Database
     public interface IDatabaseService
     {
         void Init();
-        Task<Setting> GetSettingsAsync();
+        Task<Setting> GetSettingsAsync(string course);
         Task UpdateSettingsAsync(Setting setting);
     }
 }

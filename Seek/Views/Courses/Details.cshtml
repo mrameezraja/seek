@@ -1,12 +1,12 @@
 ﻿@model Seek.Models.CourseDetailsVM
 @{
-    ViewData["Title"] = Model.Course.name;
+    ViewData["Title"] = Model.Course.Name;
     int index = 0;
 }
 
 <header class="bg-white shadow">
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">@Model.Course.name</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900">@Model.Course.Name</h1>
     </div>
 </header>
 <main>
@@ -14,14 +14,14 @@
         <div>
             <div class="grid grid-flow-col gap-3">
                 <div class="col-span-1">
-                    @foreach (var chapter in Model.Course.chapters)
+                    @foreach (var chapter in Model.Course.Chapters)
                     {
                         index++;
-                        <div x-data="{ open_@(index): @(chapter.slug.Equals(Model.Chapter?.slug).ToString().ToLower()) }">
+                        <div x-data="{ open_@(index): @(chapter.Slug.Equals(Model.Course?.CourseProgress?.Chapter).ToString().ToLower()) }">
 
                             <div class="mb-3 cursor-pointer flex items-center" @@click="open_@(index) = !open_@(index)">
-                                <span class="font-bold">@chapter.title.ToLowerInvariant()</span>
-                                <span class="ml-1">(@chapter.lessons.Count)</span>
+                                <span class="font-bold">@chapter.Title.ToLowerInvariant()</span>
+                                <span class="ml-1">(@chapter.Lessons.Count)</span>
                                 <div class="duration-300 ease-in-out opacity-100 ml-2 mt-1 w-auto">
                                     <svg x-show="!open_@(index)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-gray-700"><path d="m6 9 6 6 6-6"></path></svg>
                                     <svg x-show="open_@(index)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-gray-700"><path d="m18 15-6-6-6 6" /></svg>
@@ -29,15 +29,15 @@
                             </div>
                             
                             <nav class="px-2 space-y-1 mb-2" x-show="open_@(index)">
-                                @foreach (var lesson in chapter.lessons)
+                                @foreach (var lesson in chapter.Lessons)
                                 {
-                                    bool current = lesson.slug.Equals(Model.Lesson?.slug);
+                                    bool current = lesson.Slug.Equals(Model.Course?.CourseProgress?.Lesson);
 
-                                    <a asp-area="" asp-controller="Courses" asp-action="Details" asp-route-course="@Model.Course.slug" asp-route-chapter="@chapter.slug" asp-route-lesson="@lesson.slug" class="@(current ? "bg-indigo-50 text-gray-900" : "" ) text-gray-600 hover:bg-gray-100 hover:text-gray-500 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                    <a asp-area="" asp-controller="Courses" asp-action="Details" asp-route-course="@Model.Course.Slug" asp-route-chapter="@chapter.Slug" asp-route-lesson="@lesson.Slug" class="@(current ? "bg-indigo-50 text-gray-900" : "" ) text-gray-600 hover:bg-gray-100 hover:text-gray-500 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
                                         <div class="flex items-center text-sm leading-5 group">
                                             <svg class="@(current ? "text-rose-500" : "") h-4 w-4 text-gray-900 stroke-1 mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7.75a.75.75 0 0 1 1.142-.638l3.664 2.249a.75.75 0 0 1 0 1.278l-3.664 2.25a.75.75 0 0 1-1.142-.64z"></path><path d="M12 17v4"></path><path d="M8 21h8"></path><rect x="2" y="3" width="20" height="14" rx="2"></rect></svg>
                                             
-                                            @lesson.title.ToLowerInvariant()
+                                            @lesson.Title.ToLowerInvariant()
 
                                             @if (current)
                                             {
@@ -51,10 +51,12 @@
                     }
                 </div>
                 <div class="col-span-4">
-                    <video id="vplayer" playsinline controls class="border-2 w-full h-100">
-                        <source src="@Url.Content($"~/courses/{Model.Course.name}/{Model.Chapter?.title}/{Model.Lesson?.title}.mp4")" type="video/mp4">
-                        <track kind="captions" label="English captions" src="@Url.Content($"~/courses/{Model.Course.name}/{Model.Chapter?.title}/{Model.Lesson?.title}.vtt")" srclang="en" default />
-                    </video>
+                    <div style="width:875px; height: 495px;" class="border-2">
+                        <video id="vplayer" playsinline controls class="w-full h-100">
+                            <source src="@Url.Content($"~/courses/{Model.Course.Name}/{Model.Chapter?.Title}/{Model.Lesson?.Title}.mp4")" type="video/mp4">
+                            <track kind="captions" label="English captions" src="@Url.Content($"~/courses/{Model.Course.Name}/{Model.Chapter?.Title}/{Model.Lesson?.Title}.vtt")" srclang="en" default />
+                        </video>
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -69,14 +71,14 @@
         player.on('ready', (event) => {
             const instance = event.detail.plyr;
             setTimeout(function () {
-                const time = localStorage.getItem('seek.time.@Model.Lesson?.slug');
+                const time = localStorage.getItem('seek.time.@Model.Lesson?.Slug');
                 if (time) {
                     instance.currentTime = parseInt(time) || 0;
                 }
             }, 175);
         });
         player.on('timeupdate', (event) => {
-            localStorage.setItem('seek.time.@Model.Lesson?.slug', event.detail.plyr.currentTime);
+            localStorage.setItem('seek.time.@Model.Lesson?.Slug', event.detail.plyr.currentTime);
         });
     </script>
 }

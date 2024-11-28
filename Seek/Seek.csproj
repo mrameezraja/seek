@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\courses\**" />
+    <Content Remove="wwwroot\courses\**" />
+    <EmbeddedResource Remove="wwwroot\courses\**" />
+    <None Remove="wwwroot\courses\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Services\" />
   </ItemGroup>
 

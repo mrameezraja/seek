@@ -5,6 +5,6 @@ namespace Seek.Services
 {
     public interface IFileService
     {
-        List<Course> GetCourses();
+        Task<List<Course>> GetCoursesAsync();
     }
 }

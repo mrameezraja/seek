@@ -14,22 +14,23 @@
             <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 @foreach (var course in Model.Courses)
                 {
-                    bool active = course.slug.Equals(Model.Course?.Course?.slug);
-
                     <li class="col-span-1 flex flex-col bg-white shadow divide-y divide-gray-200">
                         <div class="flex-1 flex flex-col p-3">
-                            <h3 class="text-gray-900 text-md font-bold">@course.name</h3>
+                            <h3 class="text-gray-900 text-md font-bold">@course.Name</h3>
                         </div>
                         <div>
                             <div class="-mt-px flex divide-x divide-gray-200">
                                 <div class="w-0 flex-1 flex">
                                     <span class="ml-3 relative w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border border-transparent rounded-br-lg hover:text-gray-500">
-                                        
+                                        @if (course.Started)
+                                        {
+                                            <svg class="h-4 w-4 text-gray-900 stroke-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7.75a.75.75 0 0 1 1.142-.638l3.664 2.249a.75.75 0 0 1 0 1.278l-3.664 2.25a.75.75 0 0 1-1.142-.64z"></path><path d="M12 17v4"></path><path d="M8 21h8"></path><rect x="2" y="3" width="20" height="14" rx="2"></rect></svg>                                            
+                                        }
                                     </span>
                                 </div>
                                 <div class="-ml-px w-0 flex-1 flex">
-                                    <a class="@(course.slug.Equals(Model.Course?.Course?.slug) ? "active" : "" ) text-blue-500 hover:text-blue-300 relative w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border border-transparent rounded-br-lg hover:text-gray-500" asp-area="" asp-controller="Courses" asp-action="Details" asp-route-course="@course.slug" asp-route-chapter="@Model.Course?.Chapter?.slug" asp-route-lesson="@Model.Course?.Lesson?.slug">
-                                        View Details
+                                    <a class="text-blue-500 hover:text-blue-300 relative w-0 flex-1 inline-flex items-center justify-center py-4 text-sm font-medium border border-transparent rounded-br-lg" asp-area="" asp-controller="Courses" asp-action="Details" asp-route-course="@course.Slug" asp-route-chapter="@course?.CourseProgress?.Chapter" asp-route-lesson="@course?.CourseProgress?.Lesson">
+                                        start
                                     </a>
                                 </div>
                             </div>

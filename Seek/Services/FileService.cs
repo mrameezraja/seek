@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Seek.Contracts;
+using Seek.Database;
 using Slugify;
 using System.IO;
 
@@ -13,26 +14,41 @@ namespace Seek.Services
         private readonly List<Course> _courses;
         private readonly IMemoryCache _cache;
         private readonly ISlugHelper _slugHelper;
+        private readonly IDatabaseService _databaseService;
         public FileService(ILogger<FileService> logger,
             IConfiguration configuration,
             IOptions<List<Course>> options,
             IMemoryCache cache,
-            ISlugHelper slugHelper)
+            ISlugHelper slugHelper,
+            IDatabaseService databaseService)
         {
             _logger = logger;
             _configuration = configuration;
             _courses = options.Value;
             _cache = cache;
             _slugHelper = slugHelper;
+            _databaseService = databaseService;
         }
 
-        public List<Course> GetCourses()
+        public async Task<List<Course>> GetCoursesAsync()
         {
-            var getCachedCourses = () =>
+            var getCachedCourses = async () =>
             {
                 foreach (var course in _courses)
                 {
-                    course.chapters = GetChapters(course);
+                    course.Chapters = GetChapters(course);
+
+                    course.CourseProgress = new CourseProgress();
+
+                    var settings = await _databaseService.GetSettingsAsync(course.Slug);
+
+                    course.CourseProgress = new CourseProgress
+                    {
+                        Chapter = settings?.Chapter,
+                        Lesson = settings?.Lesson
+                    };
+
+                    course.Started = settings != null;                    
                 }
 
                 return _courses;
@@ -44,7 +60,7 @@ namespace Seek.Services
 
             if (courses == null)
             {
-                courses = getCachedCourses();
+                courses = await getCachedCourses();
                 _cache.Set<List<Course>>(cacheKey, courses, new MemoryCacheEntryOptions
                 {
                     Size = int.MaxValue
@@ -56,16 +72,16 @@ namespace Seek.Services
 
         public List<Chapter> GetChapters(Course course)
         {
-            var directory = new DirectoryInfo(course.path);
+            var directory = new DirectoryInfo(course.Path);
 
             var chapters = directory.GetDirectories()
             .OrderBy(_ => _.Name)
             .Select(_ => new Chapter 
             { 
-                title = _.Name, 
-                path = _.FullName,
-                slug = _slugHelper.GenerateSlug(_.Name),
-                lessons = GetLessons(course, _.FullName)
+                Title = _.Name, 
+                Path = _.FullName,
+                Slug = _slugHelper.GenerateSlug(_.Name),
+                Lessons = GetLessons(course, _.FullName)
             }).ToList();
 
             return chapters;
@@ -80,9 +96,9 @@ namespace Seek.Services
                 .OrderBy(_ => _.Name)
                 .Select(_ => new Lesson
                 {
-                    title = _.Name.Replace(ext, ""),
-                    path = _.FullName,
-                    slug = _slugHelper.GenerateSlug(_.Name)
+                    Title = _.Name.Replace(ext, ""),
+                    Path = _.FullName,
+                    Slug = _slugHelper.GenerateSlug(_.Name)
                 })
                 .ToList();
 

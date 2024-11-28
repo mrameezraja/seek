@@ -20,14 +20,14 @@ namespace Seek.Database
             }
         }
 
-        public async Task<Setting> GetSettingsAsync()
+        public async Task<Setting> GetSettingsAsync(string course)
         {
-            return await _context.Settings.AsNoTracking().FirstOrDefaultAsync();
+            return await _context.Settings.AsNoTracking().FirstOrDefaultAsync(_ => _.Course == course);
         }
 
         public async Task UpdateSettingsAsync(Setting setting)
         {
-            var s = await _context.Settings.FirstOrDefaultAsync();                       
+            var s = await _context.Settings.FirstOrDefaultAsync(_ => _.Course == setting.Course);                       
 
             if (s != null)
             {

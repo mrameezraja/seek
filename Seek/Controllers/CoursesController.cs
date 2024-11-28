@@ -21,33 +21,9 @@ namespace Seek.Controllers
         {
             var vm = new CoursesVM();
 
-            var courses = _fileService.GetCourses();
-
-            var settings = await _databaseService.GetSettingsAsync();
-
-            if (settings != null)
-            {
-                var crs = courses.FirstOrDefault(_ => _.slug == settings.Course);
-
-                vm.Course.Course = crs;
-
-                if (!string.IsNullOrEmpty(settings.Chapter))
-                {
-                    var chpr = crs?.chapters.FirstOrDefault(_ => _.slug.Equals(settings.Chapter));
-
-                    if (chpr != null && !string.IsNullOrEmpty(settings.Lesson))
-                    {
-                        var lsn = chpr.lessons.FirstOrDefault(_ => _.slug.Equals(settings.Lesson));
-
-                        vm.Course.Chapter = chpr;
-                        vm.Course.Lesson = lsn;
-                    }
-
-                }
-            }
+            var courses = await _fileService.GetCoursesAsync();            
 
             vm.Courses = courses;
-            vm.Setting = settings;
 
             return View(vm);
         }
@@ -63,17 +39,17 @@ namespace Seek.Controllers
 
             var vm = new CourseDetailsVM();
 
-            var crs = _fileService.GetCourses().FirstOrDefault(_ => _.slug == course);
+            var crs = (await _fileService.GetCoursesAsync()).FirstOrDefault(_ => _.Slug == course);
 
             vm.Course = crs;
 
             if (!string.IsNullOrEmpty(chapter))
             {
-                var chpr = crs?.chapters.FirstOrDefault(_ => _.slug.Equals(chapter));
+                var chpr = crs?.Chapters.FirstOrDefault(_ => _.Slug.Equals(chapter));
 
                 if (chpr != null && !string.IsNullOrEmpty(lesson))
                 {                    
-                    var lsn = chpr.lessons.FirstOrDefault(_ => _.slug.Equals(lesson));
+                    var lsn = chpr.Lessons.FirstOrDefault(_ => _.Slug.Equals(lesson));
 
                     vm.Chapter = chpr;
                     vm.Lesson = lsn;
