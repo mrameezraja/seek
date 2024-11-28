@@ -18,8 +18,15 @@
                     {
                         index++;
                         <div x-data="{ open_@(index): @(chapter.slug.Equals(Model.Chapter?.slug).ToString().ToLower()) }">
-                            
-                            <div class="mb-3 cursor-pointer" @@click="open_@(index) = !open_@(index)">@chapter.title.ToLowerInvariant()</div>
+
+                            <div class="mb-3 cursor-pointer flex items-center" @@click="open_@(index) = !open_@(index)">
+                                @chapter.title.ToLowerInvariant()
+                                (@chapter.lessons.Count)
+                                <div class="duration-300 ease-in-out opacity-100 ml-2 mt-1 w-auto">
+                                    <svg x-show="!open_@(index)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-gray-700"><path d="m6 9 6 6 6-6"></path></svg>
+                                    <svg x-show="open_@(index)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-gray-700"><path d="m18 15-6-6-6 6" /></svg>
+                                </div>                                
+                            </div>
                             
                             <nav class="px-2 space-y-1" x-show="open_@(index)">
                                 @foreach (var lesson in chapter.lessons)
@@ -44,7 +51,7 @@
                     }
                 </div>
                 <div class="col-span-4">
-                    <video id="vplayer" playsinline controls width="640" height="264" class="border-2">
+                    <video id="vplayer" playsinline controls class="border-2 w-full h-100">
                         <source src="@Url.Content($"~/courses/{Model.Course.name}/{Model.Chapter?.title}/{Model.Lesson?.title}.mp4")" type="video/mp4">
                         <track kind="captions" label="English captions" src="@Url.Content($"~/courses/{Model.Course.name}/{Model.Chapter?.title}/{Model.Lesson?.title}.vtt")" srclang="en" default />
                     </video>
@@ -73,14 +80,3 @@
         });
     </script>
 }
-
-
-
-
-<div x-data="{ open: false }">
-    <button @@click="open = !open">Expand</button>
-
-    <span x-show="open">
-        Content...
-    </span>
-</div>

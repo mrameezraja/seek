@@ -1,9 +1,16 @@
 using Seek.Contracts;
 using Seek.Database;
 using Seek.Services;
+using Serilog;
 using Slugify;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(Path.GetFullPath("Logs/Log_.txt"), rollingInterval: RollingInterval.Day, fileSizeLimitBytes: 10485760, rollOnFileSizeLimit: true, retainedFileCountLimit: 10)
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSerilog();
 
 builder.Services.AddEntityFrameworkSqlite().AddDbContext<SeekDbContext>();
 
@@ -25,6 +32,8 @@ builder.Services.Configure<List<Course>>(builder.Configuration.GetSection("Seek:
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -44,5 +53,7 @@ app.UseCors(x => x
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// app.Services.GetService<IDatabaseService>()?.Init();
 
 app.Run();

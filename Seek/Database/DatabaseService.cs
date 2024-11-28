@@ -10,8 +10,6 @@ namespace Seek.Database
         public DatabaseService(SeekDbContext context)
         {
             _context = context;
-
-            // Init();
         }
 
         public void Init()
