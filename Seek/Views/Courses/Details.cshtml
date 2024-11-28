@@ -10,7 +10,7 @@
     </div>
 </header>
 <main>
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 bg-white mt-6 mb-6 border">
         <div>
             <div class="grid grid-flow-col gap-3">
                 <div class="col-span-1">
@@ -20,15 +20,15 @@
                         <div x-data="{ open_@(index): @(chapter.slug.Equals(Model.Chapter?.slug).ToString().ToLower()) }">
 
                             <div class="mb-3 cursor-pointer flex items-center" @@click="open_@(index) = !open_@(index)">
-                                @chapter.title.ToLowerInvariant()
-                                (@chapter.lessons.Count)
+                                <span class="font-bold">@chapter.title.ToLowerInvariant()</span>
+                                <span class="ml-1">(@chapter.lessons.Count)</span>
                                 <div class="duration-300 ease-in-out opacity-100 ml-2 mt-1 w-auto">
                                     <svg x-show="!open_@(index)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-gray-700"><path d="m6 9 6 6 6-6"></path></svg>
                                     <svg x-show="open_@(index)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-gray-700"><path d="m18 15-6-6-6 6" /></svg>
                                 </div>                                
                             </div>
                             
-                            <nav class="px-2 space-y-1" x-show="open_@(index)">
+                            <nav class="px-2 space-y-1 mb-2" x-show="open_@(index)">
                                 @foreach (var lesson in chapter.lessons)
                                 {
                                     bool current = lesson.slug.Equals(Model.Lesson?.slug);

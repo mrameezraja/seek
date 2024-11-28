@@ -15,7 +15,7 @@ namespace Seek.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return Redirect("/courses");
         }
 
         public IActionResult Privacy()
